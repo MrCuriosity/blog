@@ -6,8 +6,7 @@
 0.1 + 0.2
 // output 0.30000000000000004
 ```
-
-根据[IEEE754 STANDARD](https://en.wikipedia.org/wiki/IEEE_754), JS中的Number都是64位bit来存储(double), 一位符号位S, 11位指数位E, 52位尾数位M
+出现类似的无限小数，换算成二进制之后，显然计算机不可能用无限的内存空间去存储无限小数，于是根据[IEEE754 STANDARD](https://en.wikipedia.org/wiki/IEEE_754), JS中的Number都是64位bit来存储(double), 一位符号位S, 11位指数位E, 52位尾数位M
 ```md
 V = (-1)^S + 2^E + M
 ```
