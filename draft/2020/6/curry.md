@@ -38,7 +38,7 @@ const curry = (fn) => { // fn as param
     if (/* still have some params to call */) {
       /* return a function to call recursively */
     } else {
-      fn.apply(null, rest); // final call
+      return fn.apply(null, rest); // final call
     }
   }
 }
@@ -57,7 +57,7 @@ const curry = (fn, length) => { // fn as param
     if (rest.length < adaptedLen) {
       return curry.apply() // ???
     } else {
-      fn.apply(null, rest); // final call
+      return fn.apply(null, rest); // final call
     }
   }
 }
@@ -111,8 +111,20 @@ const curry = (fn, length) => { // fn as param
       const partialCalledFn = fn.bind(null, ...rest);
       return curry.apply(null, [partialCalledFn, adaptedLen - rest.length]);
     } else {
-      fn.apply(null, rest); // final call
+      return fn.apply(null, rest); // final call
     }
   }
 }
+```
+
+好嘛，现在来试一下
+```javascript
+const test = (a, b, c) => [a, b, c];
+const curried = curry(test);
+curried(2)(3)(3)
+// [2, 3, 3]
+curried(2)(3, 3)
+// [2, 3, 3]
+curried(233, 3)(666)
+// [233, 3, 666]
 ```
