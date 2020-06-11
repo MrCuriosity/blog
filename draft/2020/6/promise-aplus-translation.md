@@ -25,13 +25,111 @@ Finally, the core Promises/A+ specification does not deal with how to create, fu
   1.4 “exception” is a value that is thrown using the throw statement.
 
   1.5 “reason” is a value that indicates why a promise was rejected.
+
 > # 1. 术语
-  1.1 "promise"的类型是`object`or`function`, 并且有一个`then`方法, `then`的行为遵循规范.
 
-  1.2 "thenable"是一个`object`or`function`，它有一个`then`方法
+  - 1.1 "promise"的类型是`object`or`function`, 并且有一个`then`方法, `then`的行为遵循规范.
 
-  1.3 "value"可以是一切合法的JS value(包括`undefined`, `thenable`或者`promise`)
+  - 1.2 "thenable"是一个`object`or`function`，它有一个`then`方法
 
-  1.4 "exception"是一个由`throw`声明抛出的value[*不一定是`error`*]
+  - 1.3 "value"可以是一切合法的JS value(包括`undefined`, `thenable`或者`promise`)
 
-  1.5 "reason"用来表明promise被`reject`的原因
+  - 1.4 "exception"是一个由`throw`声明抛出的value[*不一定是`error`*]
+
+  - 1.5 "reason"用来表明promise被`reject`的原因
+
+# 2. Requirements
+## 2.1 Promise States
+A promise must be in one of three states: pending, fulfilled, or rejected.
+
+    2.1.1 When pending, a promise:
+
+      2.1.1.1 may transition to either the fulfilled or rejected state.
+
+    2.1.2 When fulfilled, a promise:
+
+      2.1.2.1 must not transition to any other state.
+
+      2.1.2.2 must have a value, which must not change.
+
+    2.1.3 When rejected, a promise:
+
+      2.1.3.1 must not transition to any other state.
+
+      2.1.3.2 must have a reason, which must not change.
+
+Here, “must not change” means immutable identity (i.e. ===), but does not imply deep immutability.
+
+> # 2. 需求
+## 2.1 Promise States
+promise的状态必须是以下三选一: `pending`, `fulfilled`, or `rejected`.
+
+  - 2.1.1 当状态是`pending`时, promise:
+
+    - 2.1.1.1 可以转换成`fulfilled` or `rejected`.
+
+  - 2.1.2 当状态是`fulfilled`, promise:
+
+    - 2.1.2.1 无法转换成其他任何状态.
+
+    - 2.1.2.2 必须有一个value，并且不可改变.
+
+  - 2.1.3 当状态是`rejected`时, promise:
+
+    - 2.1.3.1 无法转换成其他任何状态.
+
+    - 2.1.3.2 必须有一个reason，并且不可改变.
+
+这里, “must not change”指的是id不可变(`===`), 但不意味着deepEqual(*可以改变引用对变量部的东西*)
+
+# The then Method
+A promise must provide a `then` method to access its current or eventual value or reason.
+
+A promise’s `then` method accepts two arguments:
+
+```javascript
+promise.then(onFulfilled, onRejected)
+```
+- 2.2.1 Both onFulfilled and onRejected are optional arguments:
+
+  - 2.2.1.1 If `onFulfilled` is not a function, it must be ignored.
+
+  - 2.2.1.2 If `onRejected` is not a function, it must be ignored.
+
+- 2.2.2 If `onFulfilled` is a function:
+
+  - 2.2.2.1 it must be called after `promise` is fulfilled, with `promise`’s value as its first argument.
+
+  - 2.2.2.2 it must not be called before `promise` is fulfilled.
+
+  - 2.2.2.3 it must not be called more than once.
+
+- 2.2.3 If `onRejected` is a function,
+
+  - 2.2.3.1 it must be called after `promise` is rejected, with `promise`’s reason as its first argument.
+
+  - 2.2.3.2 it must not be called before `promise` is rejected.
+
+  - 2.2.3.3 it must not be called more than once.
+
+- 2.2.4 `onFulfilled` or `onRejected` must not be called until the [execution context](https://es5.github.io/#x10.3) stack contains only platform code. [3.1].
+
+- 2.2.5 `onFulfilled` and `onRejected` must be called as functions (i.e. with no `this` value). [3.2]
+
+- 2.2.6 `then` may be called multiple times on the same promise.
+
+  - 2.2.6.1 If/when `promise` is fulfilled, all respective `onFulfilled` callbacks must execute in the order of their originating calls to `then`.
+
+  - 2.2.6.2 If/when `promise` is rejected, all respective `onRejected` callbacks must execute in the order of their originating calls to then.
+- 2.2.7 then must return a promise [3.3].
+
+```javascript
+promise2 = promise1.then(onFulfilled, onRejected);
+```
+  - 2.2.7.1 If either `onFulfilled` or `onRejected` returns a value `x`, run the Promise Resolution Procedure `[[Resolve]](promise2, x)`.
+
+  - 2.2.7.2 If either `onFulfilled` or `onRejected` throws an exception `e`, `promise2` must be rejected with `e` as the reason.
+
+  - 2.2.7.3 If `onFulfilled` is not a function and `promise1` is fulfilled, `promise2` must be fulfilled with the same value as `promise1`.
+
+  - 2.2.7.4 If `onRejected` is not a function and `promise1` is rejected, `promise2` must be rejected with the same reason as `promise1`.
