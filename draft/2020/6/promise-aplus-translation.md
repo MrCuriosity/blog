@@ -16,15 +16,15 @@ Finally, the core Promises/A+ specification does not deal with how to create, fu
 > 最终，Promises/A+规范的核心，并不涉及如何create/fulfill/reject promises, 取而代之的，我们聚焦在如何提供一个可互操作的`then`方法上。接下来，配套的规范会涉及这些主题。
 
 # 1.Terminology
-  1.1 “promise” is an object or function with a then method whose behavior conforms to this specification.
+  - 1.1 “promise” is an object or function with a then method whose behavior conforms to this specification.
 
-  1.2 “thenable” is an object or function that defines a then method.
+  - 1.2 “thenable” is an object or function that defines a then method.
 
-  1.3 “value” is any legal JavaScript value (including undefined, a thenable, or a promise).
+  - 1.3 “value” is any legal JavaScript value (including undefined, a thenable, or a promise).
 
-  1.4 “exception” is a value that is thrown using the throw statement.
+  - 1.4 “exception” is a value that is thrown using the throw statement.
 
-  1.5 “reason” is a value that indicates why a promise was rejected.
+  - 1.5 “reason” is a value that indicates why a promise was rejected.
 
 > # 1. 术语
 
@@ -42,21 +42,21 @@ Finally, the core Promises/A+ specification does not deal with how to create, fu
 ## 2.1 Promise States
 A promise must be in one of three states: pending, fulfilled, or rejected.
 
-    2.1.1 When pending, a promise:
+  - 2.1.1 When pending, a promise:
 
-      2.1.1.1 may transition to either the fulfilled or rejected state.
+    - 2.1.1.1 may transition to either the fulfilled or rejected state.
 
-    2.1.2 When fulfilled, a promise:
+  - 2.1.2 When fulfilled, a promise:
 
-      2.1.2.1 must not transition to any other state.
+    - 2.1.2.1 must not transition to any other state.
 
-      2.1.2.2 must have a value, which must not change.
+    - 2.1.2.2 must have a value, which must not change.
 
-    2.1.3 When rejected, a promise:
+  - 2.1.3 When rejected, a promise:
 
-      2.1.3.1 must not transition to any other state.
+    - 2.1.3.1 must not transition to any other state.
 
-      2.1.3.2 must have a reason, which must not change.
+    - 2.1.3.2 must have a reason, which must not change.
 
 Here, “must not change” means immutable identity (i.e. ===), but does not imply deep immutability.
 
