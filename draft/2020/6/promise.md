@@ -9,9 +9,9 @@
     - 一个promise实例有三种状态: pending, fullfilled和rejected.
       - 启动后状态为pending, fullfilled和rejected各自对应resolve和reject调用后的状态
     - 一个promise实例有一个then方法
-      - then方法也有两个参数，resolvedFn和rejectedFn
-      - then可以被链式调用, resolvedFn的第一个参数是`register`里resolve的实参（首次被调用的then), 或者上一个then的resolvedFn的returnValue;所以链式调用then的实质是注册了一系列状态改变之后的回调函数，到一个队列中，而这个队列的执行是同步和异步混合的.
-      - resolvedFn可以返回一个普通值，也可以返回一个Promise实例（这里应该是难点，没有这个特性，promise是实现会简单许多）
+      - then方法也有两个参数, resolvedFn和rejectedFn
+      - then可以被链式调用, resolvedFn的第一个参数是`register`里resolve的实参（首次被调用的then), 或者上一个then的resolvedFn的returnValue;所以链式调用then的实质是注册了一系列状态改变之后的回调函数, 到一个队列中, 而这个队列的执行是同步和异步混合的.
+      - resolvedFn可以返回一个普通值, 也可以返回一个Promise实例（这里应该是难点, 没有这个特性, promise是实现会简单许多）
 
 ---
 
@@ -25,15 +25,15 @@ class MyPromise {
   constructor(register) {
     this.__state = PENDING; // 初始状态
     this.__successHandlersQueue = []; // then(resolvedFn)队列
-    this.__value = undefined; // 当前值，跟着__state变化
-    const instance = this; // 拿一个变量固定一下this，否则调用栈变化之后可能找不到实例
+    this.__value = undefined; // 当前值, 跟着__state变化
+    const instance = this; // 拿一个变量固定一下this, 否则调用栈变化之后可能找不到实例
 
     const __resolve = function(value) {
       instance.__value = value;
       if (instance.__state === PENDING || instance.__state === FULLFILLED) {
         while (instance.__successHandlersQueue.length) {
           const param = instance.__value; // 上次的resolvedValue
-          const handler = instance.__successHandlersQueue.shift(); // 后进先出，依次调用
+          const handler = instance.__successHandlersQueue.shift(); // 后进先出, 依次调用
           const retOfThen = handler(param);
           instance.__value = retOfThen; // 把then的返回值传给下个then注册的回调使用
         }
@@ -63,7 +63,7 @@ p.then(data => console.log('data in 1st then', data));
 // MyPromise {__state: "pending", __successHandlersQueue: Array(1), __value: undefined}
 // data in 1st then resolvedValue1
 ```
-ok, 基本功能没问题，再链式调用一下
+ok, 基本功能没问题, 再链式调用一下
 ```javascript
 const p = new MyPromise(resolve => {
   setTimeout(() => resolve('resolvedValue1'), 1000);
@@ -101,10 +101,10 @@ p
 // data in 2nd then 1
 // data in 3rd then MyPromise {__state: "pending", __successHandlersQueue: Array(0), __value: undefined}
 ```
-3rd then 这里错了，正确的打印应该是`asyncResolvedValue1`, 检查一下发现，原因是
+3rd then 这里错了, 正确的打印应该是`asyncResolvedValue1`, 检查一下发现, 原因是
 ```javascript
 const retOfThen = handler(param);
-// handler(param)的返回值也可能是一个Promise，而我们的意图是拿到其resolve的值
+// handler(param)的返回值也可能是一个Promise, 而我们的意图是拿到其resolve的值
 ```
 再处理一下__resolve函数
 ```javascript
@@ -116,8 +116,8 @@ class MyPromise {
   constructor(register) {
     this.__state = PENDING; // 初始状态
     this.__successHandlersQueue = []; // then(resolvedFn)队列
-    this.__value = undefined; // 当前值，跟着__state变化
-    const instance = this; // 拿一个变量固定一下this，否则调用栈变化之后可能找不到实例
+    this.__value = undefined; // 当前值, 跟着__state变化
+    const instance = this; // 拿一个变量固定一下this, 否则调用栈变化之后可能找不到实例
 
     const __resolve = async function(value) {
       instance.__value = value;
@@ -181,9 +181,9 @@ p
 // d3 in then 3
 // d4 in then thenPromiseValue 2
 ```
-至此，我们已经实现了
+至此, 我们已经实现了
   - Promise的构造
-  - then的链式调用
-  - then的同步与异步的返回值传参
+  - then的链式调用(resolvedFn)
+  - then的同步与异步的返回值传参(resolvedFn)
 
-但这离一个符合 [Promise/A+规范](https://promisesaplus.com/) 的Promise类还差很多，以及文章开头整理的规则也是仅仅凭借经验和直觉
+但这离一个符合 [Promise/A+规范](https://promisesaplus.com/) 的Promise类还差很多, 以及文章开头整理的规则也是仅仅凭借经验和直觉, 离规范所列的完整性和健壮性差很多
