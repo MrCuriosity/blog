@@ -6,8 +6,8 @@
 
   - 构造函数(`constructor`)接收一个回调(`register`)作为参数
     - 此回调又拥有两个参数(`resolve`和`reject`), 他们也是函数, 调用时机由用户决定(`register`内部, 同步或者异步)
-    - 一个promise实例有三种状态: pending, fullfilled和rejected.
-      - 启动后状态为pending, fullfilled和rejected各自对应resolve和reject调用后的状态
+    - 一个promise实例有三种状态: pending, fulfilled和rejected.
+      - 启动后状态为pending, fulfilled和rejected各自对应resolve和reject调用后的状态
     - 一个promise实例有一个then方法
       - then方法也有两个参数, resolvedFn和rejectedFn
       - then可以被链式调用, resolvedFn的第一个参数是`register`里resolve的实参（首次被调用的then), 或者上一个then的resolvedFn的returnValue;所以链式调用then的实质是注册了一系列状态改变之后的回调函数, 到一个队列中, 而这个队列的执行是同步和异步混合的.
@@ -18,7 +18,7 @@
 ### 先写一个主体
 ```javascript
 const PENDING = 'pending';
-const FULLFILLED = 'fullfilled';
+const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
 
 class MyPromise {
@@ -30,7 +30,7 @@ class MyPromise {
 
     const __resolve = function(value) {
       instance.__value = value;
-      if (instance.__state === PENDING || instance.__state === FULLFILLED) {
+      if (instance.__state === PENDING || instance.__state === FULFILLED) {
         while (instance.__successHandlersQueue.length) {
           const param = instance.__value; // 上次的resolvedValue
           const handler = instance.__successHandlersQueue.shift(); // 后进先出, 依次调用
@@ -109,7 +109,7 @@ const retOfThen = handler(param);
 再处理一下__resolve函数
 ```javascript
 const PENDING = 'pending';
-const FULLFILLED = 'fullfilled';
+const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
 
 class MyPromise {
@@ -121,7 +121,7 @@ class MyPromise {
 
     const __resolve = async function(value) {
       instance.__value = value;
-      if (instance.__state === PENDING || instance.__state === FULLFILLED) {
+      if (instance.__state === PENDING || instance.__state === FULFILLED) {
         while (instance.__successHandlersQueue.length) {
           const param = instance.__value; // 上次的resolvedValue
           const handler = instance.__successHandlersQueue.shift();
