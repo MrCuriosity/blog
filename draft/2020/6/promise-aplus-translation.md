@@ -26,8 +26,7 @@ Finally, the core Promises/A+ specification does not deal with how to create, fu
 
   - 1.5 “reason” is a value that indicates why a promise was rejected.
 
-> # 1. 术语
-
+  # 1. 术语
   - 1.1 "promise"的类型是`object`or`function`, 并且有一个`then`方法, `then`的行为遵循规范.
 
   - 1.2 "thenable"是一个`object`or`function`，它有一个`then`方法
@@ -60,7 +59,7 @@ A promise must be in one of three states: pending, fulfilled, or rejected.
 
 Here, “must not change” means immutable identity (i.e. ===), but does not imply deep immutability.
 
-> # 2. 需求
+# 2. 需求
 ## 2.1 Promise States
 promise的状态必须是以下三选一: `pending`, `fulfilled`, or `rejected`.
 
