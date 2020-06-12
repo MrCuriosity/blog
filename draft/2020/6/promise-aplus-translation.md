@@ -60,7 +60,7 @@ A promise must be in one of three states: pending, fulfilled, or rejected.
 Here, “must not change” means immutable identity (i.e. ===), but does not imply deep immutability.
 
 # 2. 需求
-## 2.1 Promise States
+## 2.1 Promise 状态
 promise的状态必须是以下三选一: `pending`, `fulfilled`, or `rejected`.
 
   - 2.1.1 当状态是`pending`时, promise:
@@ -81,7 +81,7 @@ promise的状态必须是以下三选一: `pending`, `fulfilled`, or `rejected`.
 
 这里, “must not change”指的是id不可变(`===`), 但不意味着deepEqual(*可以改变引用对变量部的东西*)
 
-# The then Method
+# The `then` Method
 A promise must provide a `then` method to access its current or eventual value or reason.
 
 A promise’s `then` method accepts two arguments:
@@ -89,7 +89,7 @@ A promise’s `then` method accepts two arguments:
 ```javascript
 promise.then(onFulfilled, onRejected)
 ```
-- 2.2.1 Both onFulfilled and onRejected are optional arguments:
+- 2.2.1 Both `onFulfilled` and `onRejected` are optional arguments:
 
   - 2.2.1.1 If `onFulfilled` is not a function, it must be ignored.
 
@@ -132,3 +132,60 @@ promise2 = promise1.then(onFulfilled, onRejected);
   - 2.2.7.3 If `onFulfilled` is not a function and `promise1` is fulfilled, `promise2` must be fulfilled with the same value as `promise1`.
 
   - 2.2.7.4 If `onRejected` is not a function and `promise1` is rejected, `promise2` must be rejected with the same reason as `promise1`.
+
+# `then` 方法
+
+promise必须提供一个`then`方法，用来访问其当前value / 最终value / 或者reason.
+
+promise的`then`方法接收两个参数:
+
+```javascript
+promise.then(onFulfilled, onRejected)
+```
+
+- 2.2.1 `onFulfilled`和`onRejected`都是可选参数:
+
+  - 2.2.1.1 如果`onFulfilled`不是函数, 它会被忽略(*不传参*)
+
+  - 2.2.1.2 如果`onRejected`不是函数, 他会被忽略(*不传参*).
+
+- 2.2.2 如果`onFulfilled`是函数:
+
+  - 2.2.2.1 它需要在`promise`被fulfilled之后被调用, `promise`的值是其第一个参数.
+
+  - 2.2.2.2 它不能在`promise`被fulfilled之前被调用.
+
+  - 2.2.2.3 它只能被调用一次.
+
+- 2.2.3 如果`onRejected`是函数:
+.
+  - 2.2.3.1 他需要在`promise`被rejected之后调用, `promise`的reason是其第一个参数
+
+  - 2.2.3.2 它不能再`promsie`被rejected之前被调用.
+
+  - 2.2.3.3 它只能被调用一次.
+
+- 2.2.4 `onFulfilled`或`onRejected`只能当[执行上下文](https://es5.github.io/#x10.3)只包含平台码时被调用[3.1].
+
+- 2.2.5 `onFulfilled`和`onRejected`必须以函数的形式调用(换言之，没有`this`指针). [3.2]
+
+- 2.2.6 `then`可以被同一个promise多次调用
+
+  - 2.2.6.1 当`promise`被fulfilled时,所有`onFulfilled`回调必须以它们被`then`依次注册的顺序依次调用.
+
+  - 2.2.6.2 If/when `promise` is rejected, all respective `onRejected` callbacks must execute in the order of their originating calls to then.
+
+  - 2.2.6.2 当`promise`被rejected时,所有`onFulfilled`回调必须以它们被`then`依次注册的顺序依次调用.
+- 2.2.7 `then`方法的返回值必须是一个promise[3.3].
+
+```javascript
+promise2 = promise1.then(onFulfilled, onRejected);
+```
+
+  - 2.2.7.1 如果以上代码中的`onFulfilled`或`onRejected` 返回一个`x`, 按2.3的顺序处理`[[Resolve]](promise2, x)`.
+
+  - 2.2.7.2 如果以上代码中的`onFulfilled`或`onRejected` 抛出一个`e`, `promise2`必须以`e`作为其reason被rejected.
+
+  - 2.2.7.3 如果`onFulfilled`不是函数并且`promise1`已经fulfilled, `promise2`必须和`promise1`同样的value被fulfilled.
+
+  - 2.2.7.4 如果`onRejected`不是函数并且`promise1`已经rejected, `promise2`必须和`promise1`以同样的reason被rejected.
