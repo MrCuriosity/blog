@@ -3,23 +3,23 @@
 
 **An open standard for sound, interoperable JavaScript promises—by implementers, for implementers.**
 
-一个用以表示、使用JavaScript promises的开放标准——由开发者实施，供开发者使用.
+一个用以表示、使用JavaScript promises的开放标准——由开发者实施, 供开发者使用.
 
 A promise represents the eventual result of an asynchronous operation. The primary way of interacting with a promise is through its `then` method, which registers callbacks to receive either a promise’s eventual value or the reason why the promise cannot be fulfilled.
 
-一个promise表示了一个异步操作的最终结果。promise的主要交互手段是其`then`方法，该方法注册了一系列回调用来接收promise的最终值，或是接收promise无法完成的原因。
+一个promise表示了一个异步操作的最终结果。promise的主要交互手段是其`then`方法, 该方法注册了一系列回调用来接收promise的最终值, 或是接收promise无法完成的原因。
 
 This specification details the behavior of the `then` method, providing an interoperable base which all Promises/A+ conformant promise implementations can be depended on to provide. As such, the specification should be considered very stable. Although the Promises/A+ organization may occasionally revise this specification with minor backward-compatible changes to address newly-discovered corner cases, we will integrate large or backward-incompatible changes only after careful consideration, discussion, and testing.
 
-这份规范详述了`then`方法的具体行为，提供了一份所有Promises/A+的实施方案可以参考的操作方法.正因为如此, 这份规范应当非常稳定。不过，Promises/A+组织可能会偶尔的做一些细微的向后兼容的修订，用以处理新发现的一些边角问题。我们只会在非常细致的考虑、讨论和测试之后才会集成一些大的或是向后兼容的改动。
+这份规范详述了`then`方法的具体行为, 提供了一份所有Promises/A+的实施方案可以参考的操作方法.正因为如此, 这份规范应当非常稳定。不过, Promises/A+组织可能会偶尔的做一些细微的向后兼容的修订, 用以处理新发现的一些边角问题。我们只会在非常细致的考虑、讨论和测试之后才会集成一些大的或是向后兼容的改动。
 
 Historically, Promises/A+ clarifies the behavioral clauses of the earlier [Promises/A](http://wiki.commonjs.org/wiki/Promises/A) proposal, extending it to cover de facto behaviors and omitting parts that are underspecified or problematic.
 
-从历史角度来讲，Promises/A+规范明确了早期的[Promises/A](http://wiki.commonjs.org/wiki/Promises/A)提案具体行为条款.拓展并且使其覆盖了实际行为和先前不足的、有问题的部分。
+从历史角度来讲, Promises/A+规范明确了早期的[Promises/A](http://wiki.commonjs.org/wiki/Promises/A)提案具体行为条款.拓展并且使其覆盖了实际行为和先前不足的、有问题的部分。
 
 Finally, the core Promises/A+ specification does not deal with how to create, fulfill, or reject promises, choosing instead to focus on providing an interoperable `then` method. Future work in companion specifications may touch on these subjects.
 
-最终，Promises/A+规范的核心，并不涉及如何create/fulfill/reject promises, 取而代之的，我们聚焦在如何提供一个可互操作的`then`方法上。接下来，配套的规范会涉及这些主题。
+最终, Promises/A+规范的核心, 并不涉及如何create/fulfill/reject promises, 取而代之的, 我们聚焦在如何提供一个可互操作的`then`方法上。接下来, 配套的规范会涉及这些主题。
 
 # 1.Terminology
   - 1.1 “promise” is an object or function with a then method whose behavior conforms to this specification.
@@ -35,7 +35,7 @@ Finally, the core Promises/A+ specification does not deal with how to create, fu
   # 1. 术语
   - 1.1 "promise"的类型是`object`or`function`, 并且有一个`then`方法, `then`的行为遵循规范.
 
-  - 1.2 "thenable"是一个`object`or`function`，它有一个`then`方法(*所以这个看起来像形容词的东西其实在这里是名词*)
+  - 1.2 "thenable"是一个`object`or`function`, 它有一个`then`方法(*所以这个看起来像形容词的东西其实在这里是名词*)
 
   - 1.3 "value"可以是一切合法的JS value(包括`undefined`, `thenable`或者`promise`)
 
@@ -77,13 +77,13 @@ promise的状态必须是以下三选一: `pending`, `fulfilled`, or `rejected`.
 
     - 2.1.2.1 无法转换成其他任何状态.
 
-    - 2.1.2.2 必须有一个value，并且不可改变.
+    - 2.1.2.2 必须有一个value, 并且不可改变.
 
   - 2.1.3 当状态是`rejected`时, promise:
 
     - 2.1.3.1 无法转换成其他任何状态.
 
-    - 2.1.3.2 必须有一个reason，并且不可改变.
+    - 2.1.3.2 必须有一个reason, 并且不可改变.
 
 这里, “must not change”指的是id不可变(`===`), 但不意味着deepEqual(*可以改变引用对变量部的东西*)
 
@@ -141,7 +141,7 @@ promise2 = promise1.then(onFulfilled, onRejected);
 
 # `then` 方法
 
-promise必须提供一个`then`方法，用来访问其当前value / 最终value / 或者reason.
+promise必须提供一个`then`方法, 用来访问其当前value / 最终value / 或者reason.
 
 promise的`then`方法接收两个参数:
 
@@ -173,7 +173,7 @@ promise.then(onFulfilled, onRejected)
 
 - 2.2.4 `onFulfilled`或`onRejected`只能当[执行上下文](https://es5.github.io/#x10.3)只包含平台码时被调用[3.1](*我理解的是至少本次执行栈已完成, 保证其异步特性, 请看注释3.1*).
 
-- 2.2.5 `onFulfilled`和`onRejected`必须以函数的形式调用(换言之，没有`this`指针). [3.2]
+- 2.2.5 `onFulfilled`和`onRejected`必须以函数的形式调用(换言之, 没有`this`指针). [3.2]
 
 - 2.2.6 `then`可以被同一个promise多次调用
 
@@ -202,9 +202,9 @@ The promise resolution procedure is an abstract operation taking as input a prom
 This treatment of thenables allows promise implementations to interoperate, as long as they expose a Promises/A+-compliant `then` method. It also allows Promises/A+ implementations to “assimilate” nonconformant implementations with reasonable `then` methods.
 
 # 2.3 Promise解析步骤
-所谓**promise解析步骤**是一个抽象出来的操作，表示为一个promose和一个value `[[Resolve]](promise, x)`.如果`x`是一个thenable, 在`x`工作起来至少像是一个`promise`的前提假设下(*thable, 鸭式辨形*)，`promise`会采用`x`的state. 否则, 他会用`x`的value去fulfill这个promise.
+所谓**promise解析步骤**是一个抽象出来的操作, 表示为一个promose和一个value `[[Resolve]](promise, x)`.如果`x`是一个thenable, 在`x`工作起来至少像是一个`promise`的前提假设下(*thable, 鸭式辨形*), `promise`会采用`x`的state. 否则, 他会用`x`的value去fulfill这个promise.
 
-这个基于thenables的探讨，使得promise的(*各种*)实现之间得以交互——只要他们暴露有一个符合Promises/A+规范的`then`方法. 这也使得各种Promises/A+的实现能够兼容一些有着合规`then`方法但并不完善的其他promise实现(*比如我们练习时手写的并不那么完善的各种Promise*).
+这个基于thenables的探讨, 使得promise的(*各种*)实现之间得以交互——只要他们暴露有一个符合Promises/A+规范的`then`方法. 这也使得各种Promises/A+的实现能够兼容一些有着合规`then`方法但并不完善的其他promise实现(*比如我们练习时手写的并不那么完善的各种Promise*).
 
 To run `[[Resolve]](promise, x)`, perform the following steps:
 
@@ -230,14 +230,14 @@ To run `[[Resolve]](promise, x)`, perform the following steps:
 
 - 2.3.1 如果`promise`和`x`引用同一个对象, reject`promise` 并用`TypeError`作为reason.
 - 2.3.2 如果`x`是promise, 采用它的state[3.4]:
-  - 2.3.2.1 如果`x`正在pending, `promise`需要保持pending状态，直到`x`被fulfilled或者rejected.
+  - 2.3.2.1 如果`x`正在pending, `promise`需要保持pending状态, 直到`x`被fulfilled或者rejected.
   - 2.3.2.2 如果/当`x`fulfilled, 用相同的value fulfill这个`promise`.
   - 2.3.2.3 如果/当`x`rejected, 用相同的reason reject这个`promise`.
 - 2.3.3 相反的, 如果`x`是object或者function时,
   - 2.3.3.1 将`x.then`赋值给`then`. [3.5]
   - 2.3.3.2 If retrieving the property `x.then` results in a thrown exception `e`, reject `promise` with `e` as the reason.
   - 2.3.3.2 如果`x.then`的结果导致了一个异常`e`, 用`e`去reject这个`promise`.
-  - 2.3.3.3 如果`then`是一个function, 调用这个function并且设置`x`作为上下文，`resolvePromise`和`rejectPromise`分别作为第一、第二个参数:
+  - 2.3.3.3 如果`then`是一个function, 调用这个function并且设置`x`作为上下文, `resolvePromise`和`rejectPromise`分别作为第一、第二个参数:
     - 2.3.3.3.1 如果/当`resolvePromise`被`y`调用, 那么运行`[[Resolve]](promise, y)`
     - 2.3.3.3.2 If/when `rejectPromise` is called with a reason `r`, reject `promise` with `r`.
     - 2.3.3.3.2 如果/当`rejectPromise`被一个reason`r`调用, 用`r`去reject这个`promise`.
@@ -252,7 +252,7 @@ To run `[[Resolve]](promise, x)`, perform the following steps:
 
 If a promise is resolved with a thenable that participates in a circular thenable chain, such that the recursive nature of `[[Resolve]](promise, thenable)` eventually causes `[[Resolve]](promise, thenable)` to be called again, following the above algorithm will lead to infinite recursion. Implementations are encouraged, but not required, to detect such recursion and reject `promise` with an informative `TypeError` as the reason. [3.6]
 
-如果promise被一个thenable resolve, 这个thenable的循环调用链会变成`[[Resolve]](promise, thenable)`, 形成递归调用, 遵循以上的算法，最终会形成无限递归. 所以, 在具体实现上我们鼓励(但不必须要求)检测这种无限递归的情况，并且以一个具有提示信息的`TypeError`(*比如new TypeError('Infinite Loop Detected')*)作为reason去reject这个promise.[3.6]
+如果promise被一个thenable resolve, 这个thenable的循环调用链会变成`[[Resolve]](promise, thenable)`, 形成递归调用, 遵循以上的算法, 最终会形成无限递归. 所以, 在具体实现上我们鼓励(但不必须要求)检测这种无限递归的情况, 并且以一个具有提示信息的`TypeError`(*比如new TypeError('Infinite Loop Detected')*)作为reason去reject这个promise.[3.6]
 
 # 3. Notes
 
@@ -272,4 +272,4 @@ If a promise is resolved with a thenable that participates in a circular thenabl
 
 - 3.1 Here “platform code” means engine, environment, and promise implementation code. In practice, this requirement ensures that `onFulfilled` and `onRejected` execute asynchronously, after the event loop turn in which `then` is called, and with a fresh stack. This can be implemented with either a “macro-task” mechanism such as `setTimeout` or `setImmediate`, or with a “micro-task” mechanism such as `MutationObserver` or `process.nextTick`. Since the promise implementation is considered platform code, it may itself contain a task-scheduling queue or “trampoline” in which the handlers are called.
 
-- 3.1 这里, "平台码" 表示引擎代码(*e.g. V8)*/环境/promise本身实现的代码. 在实际情况中, 这保证了`onFulFilled`和`onRejected`一定是`then`被调用后, event loop交还主线程一个新的执行栈之后异步调用的. 这个特性可以通过`setTimeout`和`setImmediate`这种宏任务来实现, 也可以通过`MutationObserver`和`process.nextTick`这样的微任务来实现.(*这就是为啥一些考Promise和异步的面试题, 在浏览器和Node环境中打印顺序不同, 同一次执行栈中，尽管微任务注册的可能比宏任务晚，但最晚也在本次栈的末尾，这里就不展开说这个了*). 由于promise的实现通常都考虑了平台码, 他自身就往往包含了任务调度队列或处理handlers的所谓“蹦床”一样的装置.
+- 3.1 这里, "平台码" 表示引擎代码(*e.g. V8)*/环境/promise本身实现的代码. 在实际情况中, 这保证了`onFulFilled`和`onRejected`一定是`then`被调用后, event loop交还主线程一个新的执行栈之后异步调用的. 这个特性可以通过`setTimeout`和`setImmediate`这种宏任务来实现, 也可以通过`MutationObserver`和`process.nextTick`这样的微任务来实现.(*这就是为啥一些考Promise和异步的面试题, 在浏览器和Node环境中打印顺序不同, 同一次执行栈中, 尽管微任务注册的可能比宏任务晚, 但最晚也在本次栈的末尾, 这里就不展开说这个了*). 由于promise的实现通常都考虑了平台码, 他自身就往往包含了任务调度队列或处理handlers的所谓“蹦床”一样的装置.
