@@ -35,7 +35,7 @@ Finally, the core Promises/A+ specification does not deal with how to create, fu
   # 1. 术语
   - 1.1 "promise"的类型是`object`or`function`, 并且有一个`then`方法, `then`的行为遵循规范.
 
-  - 1.2 "thenable"是一个`object`or`function`，它有一个`then`方法
+  - 1.2 "thenable"是一个`object`or`function`，它有一个`then`方法(*所以这个看起来像形容词的东西其实在这里是名词*)
 
   - 1.3 "value"可以是一切合法的JS value(包括`undefined`, `thenable`或者`promise`)
 
@@ -171,7 +171,7 @@ promise.then(onFulfilled, onRejected)
 
   - 2.2.3.3 它只能被调用一次.
 
-- 2.2.4 `onFulfilled`或`onRejected`只能当[执行上下文](https://es5.github.io/#x10.3)只包含平台码时被调用[3.1].
+- 2.2.4 `onFulfilled`或`onRejected`只能当[执行上下文](https://es5.github.io/#x10.3)只包含平台码时被调用[3.1](*我理解的是至少本次执行栈已完成, 保证其异步特性, 请看注释3.1*).
 
 - 2.2.5 `onFulfilled`和`onRejected`必须以函数的形式调用(换言之，没有`this`指针). [3.2]
 
@@ -250,3 +250,26 @@ To run `[[Resolve]](promise, x)`, perform the following steps:
 - 2.3.4 If `x` is not an object or function, fulfill `promise` with `x`.
 - 2.3.4 如果`x`不是object或者function, 用`x`fulfill这个`promise`.
 
+If a promise is resolved with a thenable that participates in a circular thenable chain, such that the recursive nature of `[[Resolve]](promise, thenable)` eventually causes `[[Resolve]](promise, thenable)` to be called again, following the above algorithm will lead to infinite recursion. Implementations are encouraged, but not required, to detect such recursion and reject `promise` with an informative `TypeError` as the reason. [3.6]
+
+如果promise被一个thenable resolve, 这个thenable的循环调用链会变成`[[Resolve]](promise, thenable)`, 形成递归调用, 遵循以上的算法，最终会形成无限递归. 所以, 在具体实现上我们鼓励(但不必须要求)检测这种无限递归的情况，并且以一个具有提示信息的`TypeError`(*比如new TypeError('Infinite Loop Detected')*)作为reason去reject这个promise.[3.6]
+
+# 3. Notes
+
+- 3.1 Here “platform code” means engine, environment, and promise implementation code. In practice, this requirement ensures that `onFulfilled` and `onRejected` execute asynchronously, after the event loop turn in which `then` is called, and with a fresh stack. This can be implemented with either a “macro-task” mechanism such as `setTimeout` or `setImmediate`, or with a “micro-task” mechanism such as `MutationObserver` or `process.nextTick`. Since the promise implementation is considered platform code, it may itself contain a task-scheduling queue or “trampoline” in which the handlers are called.
+
+- 3.2 That is, in strict mode `this` will be `undefined` inside of them; in sloppy mode, it will be the global object.
+
+- 3.3 Implementations may allow `promise2 === promise1`, provided the implementation meets all requirements. Each implementation should document whether it can produce `promise2 === promise1` and under what conditions.
+
+- 3.4 Generally, it will only be known that `x` is a true promise if it comes from the current implementation. This clause allows the use of implementation-specific means to adopt the state of known-conformant promises.
+
+- 3.5 This procedure of first storing a reference to `x.then`, then testing that reference, and then calling that reference, avoids multiple accesses to the `x.then` property. Such precautions are important for ensuring consistency in the face of an accessor property, whose value could change between retrievals.
+
+- 3.6 Implementations should not set arbitrary limits on the depth of thenable chains, and assume that beyond that arbitrary limit the recursion will be infinite. Only true cycles should lead to a `TypeError`; if an infinite chain of distinct thenables is encountered, recursing forever is the correct behavior.
+
+# 3. 注释
+
+- 3.1 Here “platform code” means engine, environment, and promise implementation code. In practice, this requirement ensures that `onFulfilled` and `onRejected` execute asynchronously, after the event loop turn in which `then` is called, and with a fresh stack. This can be implemented with either a “macro-task” mechanism such as `setTimeout` or `setImmediate`, or with a “micro-task” mechanism such as `MutationObserver` or `process.nextTick`. Since the promise implementation is considered platform code, it may itself contain a task-scheduling queue or “trampoline” in which the handlers are called.
+
+- 3.1 这里, "平台码" 表示引擎代码(*e.g. V8)*/环境/promise本身实现的代码. 在实际情况中, 这保证了`onFulFilled`和`onRejected`一定是`then`被调用后, event loop交还主线程一个新的执行栈之后异步调用的. 这个特性可以通过`setTimeout`和`setImmediate`这种宏任务来实现, 也可以通过`MutationObserver`和`process.nextTick`这样的微任务来实现.(*这就是为啥一些考Promise和异步的面试题, 在浏览器和Node环境中打印顺序不同, 同一次执行栈中，尽管微任务注册的可能比宏任务晚，但最晚也在本次栈的末尾，这里就不展开说这个了*). 由于promise的实现通常都考虑了平台码, 他自身就往往包含了任务调度队列或处理handlers的所谓“蹦床”一样的装置.
