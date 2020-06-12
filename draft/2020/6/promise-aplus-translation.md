@@ -1,19 +1,25 @@
-> [原文](https://promisesaplus.com/)
+> [原文](https://promisesaplus.com/)\
+> 文中斜体字是译者注
 
 **An open standard for sound, interoperable JavaScript promises—by implementers, for implementers.**
-> 一个用以表示、使用JavaScript promises的开放标准——由开发者实施，供开发者使用.
+
+一个用以表示、使用JavaScript promises的开放标准——由开发者实施，供开发者使用.
 
 A promise represents the eventual result of an asynchronous operation. The primary way of interacting with a promise is through its `then` method, which registers callbacks to receive either a promise’s eventual value or the reason why the promise cannot be fulfilled.
-> 一个promise表示了一个异步操作的最终结果。promise的主要交互手段是其`then`方法，该方法注册了一系列回调用来接收promise的最终值，或是接收promise无法完成的原因。
+
+一个promise表示了一个异步操作的最终结果。promise的主要交互手段是其`then`方法，该方法注册了一系列回调用来接收promise的最终值，或是接收promise无法完成的原因。
 
 This specification details the behavior of the `then` method, providing an interoperable base which all Promises/A+ conformant promise implementations can be depended on to provide. As such, the specification should be considered very stable. Although the Promises/A+ organization may occasionally revise this specification with minor backward-compatible changes to address newly-discovered corner cases, we will integrate large or backward-incompatible changes only after careful consideration, discussion, and testing.
-> 这份规范详述了`then`方法的具体行为，提供了一份所有Promises/A+的实施方案可以参考的操作方法.正因为如此, 这份规范应当非常稳定。不过，Promises/A+组织可能会偶尔的做一些细微的向后兼容的修订，用以处理新发现的一些边角问题。我们只会在非常细致的考虑、讨论和测试之后才会集成一些大的或是向后兼容的改动。
+
+这份规范详述了`then`方法的具体行为，提供了一份所有Promises/A+的实施方案可以参考的操作方法.正因为如此, 这份规范应当非常稳定。不过，Promises/A+组织可能会偶尔的做一些细微的向后兼容的修订，用以处理新发现的一些边角问题。我们只会在非常细致的考虑、讨论和测试之后才会集成一些大的或是向后兼容的改动。
 
 Historically, Promises/A+ clarifies the behavioral clauses of the earlier [Promises/A](http://wiki.commonjs.org/wiki/Promises/A) proposal, extending it to cover de facto behaviors and omitting parts that are underspecified or problematic.
-> 从历史角度来讲，Promises/A+规范明确了早期的[Promises/A](http://wiki.commonjs.org/wiki/Promises/A)提案具体行为条款.拓展并且使其覆盖了实际行为和先前不足的、有问题的部分。
+
+从历史角度来讲，Promises/A+规范明确了早期的[Promises/A](http://wiki.commonjs.org/wiki/Promises/A)提案具体行为条款.拓展并且使其覆盖了实际行为和先前不足的、有问题的部分。
 
 Finally, the core Promises/A+ specification does not deal with how to create, fulfill, or reject promises, choosing instead to focus on providing an interoperable `then` method. Future work in companion specifications may touch on these subjects.
-> 最终，Promises/A+规范的核心，并不涉及如何create/fulfill/reject promises, 取而代之的，我们聚焦在如何提供一个可互操作的`then`方法上。接下来，配套的规范会涉及这些主题。
+
+最终，Promises/A+规范的核心，并不涉及如何create/fulfill/reject promises, 取而代之的，我们聚焦在如何提供一个可互操作的`then`方法上。接下来，配套的规范会涉及这些主题。
 
 # 1.Terminology
   - 1.1 “promise” is an object or function with a then method whose behavior conforms to this specification.
@@ -189,3 +195,58 @@ promise2 = promise1.then(onFulfilled, onRejected);
   - 2.2.7.3 如果`onFulfilled`不是函数并且`promise1`已经fulfilled, `promise2`必须和`promise1`同样的value被fulfilled.
 
   - 2.2.7.4 如果`onRejected`不是函数并且`promise1`已经rejected, `promise2`必须和`promise1`以同样的reason被rejected.
+
+# 2.3 The Promise Resolution Procedure
+The promise resolution procedure is an abstract operation taking as input a promise and a value, which we denote as `[[Resolve]](promise, x)`. If `x` is a thenable, it attempts to make `promise` adopt the state of `x`, under the assumption that `x` behaves at least somewhat like a promise. Otherwise, it fulfills `promise` with the value `x`.
+
+This treatment of thenables allows promise implementations to interoperate, as long as they expose a Promises/A+-compliant `then` method. It also allows Promises/A+ implementations to “assimilate” nonconformant implementations with reasonable `then` methods.
+
+# 2.3 Promise解析步骤
+所谓**promise解析步骤**是一个抽象出来的操作，表示为一个promose和一个value `[[Resolve]](promise, x)`.如果`x`是一个thenable, 在`x`工作起来至少像是一个`promise`的前提假设下(*thable, 鸭式辨形*)，`promise`会采用`x`的state. 否则, 他会用`x`的value去fulfill这个promise.
+
+这个基于thenables的探讨，使得promise的(*各种*)实现之间得以交互——只要他们暴露有一个符合Promises/A+规范的`then`方法. 这也使得各种Promises/A+的实现能够兼容一些有着合规`then`方法但并不完善的其他promise实现(*比如我们练习时手写的并不那么完善的各种Promise*).
+
+To run `[[Resolve]](promise, x)`, perform the following steps:
+
+- 2.3.1 If `promise` and `x` refer to the same object, reject `promise` with a `TypeError` as the reason.
+- 2.3.2 If `x` is a promise, adopt its state [3.4]:
+  - 2.3.2.1 If `x` is pending, `promise` must remain pending until `x` is fulfilled or rejected.
+  - 2.3.2.2 If/when `x` is fulfilled, fulfill `promise` with the same value.
+  - 2.3.2.3 If/when `x` is rejected, reject `promise` with the same reason.
+- 2.3.3 Otherwise, if `x` is an object or function,
+  - 2.3.3.1 Let `then` be `x.then`. [3.5]
+  - 2.3.3.2 If retrieving the property `x.then` results in a thrown exception `e`, reject `promise` with `e` as the reason.
+  - 2.3.3.3 If `then` is a function, call it with `x` as `this`, first argument `resolvePromise`, and second argument `rejectPromise`, where:
+    - 2.3.3.3.1 If/when `resolvePromise` is called with a value `y`, run `[[Resolve]](promise, y)`.
+    - 2.3.3.3.2 If/when `rejectPromise` is called with a reason `r`, reject `promise` with `r`.
+    - 2.3.3.3.3 If both `resolvePromise` and `rejectPromise` are called, or multiple calls to the same argument are made, the first call takes precedence, and any further calls are ignored.
+    - 2.3.3.3.4 If calling `then` throws an exception `e`,
+      - 2.3.3.3.4.1 If `resolvePromise` or `rejectPromise` have been called, ignore it.
+      - 2.3.3.3.4.2 Otherwise, reject `promise` with `e` as the reason.
+  - 2.3.3.4 If `then` is not a function, fulfill `promise` with `x`.
+- 2.3.4 If `x` is not an object or function, fulfill `promise` with `x`.
+
+`[[Resolve]](promise, x)`的运行依照如下步骤:
+
+- 2.3.1 如果`promise`和`x`引用同一个对象, reject`promise` 并用`TypeError`作为reason.
+- 2.3.2 如果`x`是promise, 采用它的state[3.4]:
+  - 2.3.2.1 如果`x`正在pending, `promise`需要保持pending状态，直到`x`被fulfilled或者rejected.
+  - 2.3.2.2 如果/当`x`fulfilled, 用相同的value fulfill这个`promise`.
+  - 2.3.2.3 如果/当`x`rejected, 用相同的reason reject这个`promise`.
+- 2.3.3 相反的, 如果`x`是object或者function时,
+  - 2.3.3.1 将`x.then`赋值给`then`. [3.5]
+  - 2.3.3.2 If retrieving the property `x.then` results in a thrown exception `e`, reject `promise` with `e` as the reason.
+  - 2.3.3.2 如果`x.then`的结果导致了一个异常`e`, 用`e`去reject这个`promise`.
+  - 2.3.3.3 如果`then`是一个function, 调用这个function并且设置`x`作为上下文，`resolvePromise`和`rejectPromise`分别作为第一、第二个参数:
+    - 2.3.3.3.1 如果/当`resolvePromise`被`y`调用, 那么运行`[[Resolve]](promise, y)`
+    - 2.3.3.3.2 If/when `rejectPromise` is called with a reason `r`, reject `promise` with `r`.
+    - 2.3.3.3.2 如果/当`rejectPromise`被一个reason`r`调用, 用`r`去reject这个`promise`.
+    - 2.3.3.3.3 当`resolvePromise`和`rejectPromise`都调用, 或者其中一个被调用多次, 第一次的调用优先, 后续的调用忽略.
+    - 2.3.3.3.4 当调用`then`抛出异常`e`时
+      - 2.3.3.3.4.1 如果`resolvePromise`或`rejectPromise`已经调用过了, 忽略这个异常.
+      - 2.3.3.3.4.2 否则, 用`e` reject 这个`promise`.
+  - 2.3.3.4 If `then` is not a function, fulfill `promise` with `x`.
+  - 2.3.3.4 如果`then`不是function, 用`x`去fulfill这个`promise`.
+- 2.3.4 If `x` is not an object or function, fulfill `promise` with `x`.
+- 2.3.4 如果`x`不是object或者function, 用`x`fulfill这个`promise`.
+
