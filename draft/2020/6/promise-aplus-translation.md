@@ -7,40 +7,32 @@
 
 A promise represents the eventual result of an asynchronous operation. The primary way of interacting with a promise is through its `then` method, which registers callbacks to receive either a promise’s eventual value or the reason why the promise cannot be fulfilled.
 
-一个promise表示了一个异步操作的最终结果。promise的主要交互手段是其`then`方法, 该方法注册了一系列回调用来接收promise的最终值, 或是接收promise无法完成的原因。
+一个promise表示了一个异步操作的最终结果. promise的主要交互手段是其`then`方法, 该方法注册了一系列回调用来接收promise的最终值, 或是接收promise无法完成的原因.
 
 This specification details the behavior of the `then` method, providing an interoperable base which all Promises/A+ conformant promise implementations can be depended on to provide. As such, the specification should be considered very stable. Although the Promises/A+ organization may occasionally revise this specification with minor backward-compatible changes to address newly-discovered corner cases, we will integrate large or backward-incompatible changes only after careful consideration, discussion, and testing.
 
-这份规范详述了`then`方法的具体行为, 提供了一份所有Promises/A+的实施方案可以参考的操作方法.正因为如此, 这份规范应当非常稳定。不过, Promises/A+组织可能会偶尔的做一些细微的向后兼容的修订, 用以处理新发现的一些边角问题。我们只会在非常细致的考虑、讨论和测试之后才会集成一些大的或是向后兼容的改动。
+这份规范详述了`then`方法的具体行为, 提供了一份所有Promises/A+的实施方案可以参考的操作方法. 正因为如此, 这份规范应当非常稳定. 不过, Promises/A+组织可能会偶尔的做一些细微的向后兼容的修订, 用以处理新发现的一些边角问题. 我们只会在非常细致的考虑、讨论和测试之后才会集成一些大的或是向后兼容的改动.
 
 Historically, Promises/A+ clarifies the behavioral clauses of the earlier [Promises/A](http://wiki.commonjs.org/wiki/Promises/A) proposal, extending it to cover de facto behaviors and omitting parts that are underspecified or problematic.
 
-从历史角度来讲, Promises/A+规范明确了早期的[Promises/A](http://wiki.commonjs.org/wiki/Promises/A)提案具体行为条款.拓展并且使其覆盖了实际行为和先前不足的、有问题的部分。
+从历史角度来讲, Promises/A+规范明确了早期的[Promises/A](http://wiki.commonjs.org/wiki/Promises/A)提案的具体行为条款. 拓展并且使其覆盖了实际行为和先前不足的、有问题的部分.
 
 Finally, the core Promises/A+ specification does not deal with how to create, fulfill, or reject promises, choosing instead to focus on providing an interoperable `then` method. Future work in companion specifications may touch on these subjects.
 
-最终, Promises/A+规范的核心, 并不涉及如何create/fulfill/reject promises, 取而代之的, 我们聚焦在如何提供一个可互操作的`then`方法上。接下来, 配套的规范会涉及这些主题。
+最后, Promises/A+规范的核心, 并不涉及如何create, fulfill,reject promises, 取而代之的, 我们聚焦在如何提供一个可互操作的`then`方法上. 以后, 配套规范可能会涉及这些问题.
 
 # 1.Terminology
   - 1.1 “promise” is an object or function with a then method whose behavior conforms to this specification.
-
   - 1.2 “thenable” is an object or function that defines a then method.
-
   - 1.3 “value” is any legal JavaScript value (including undefined, a thenable, or a promise).
-
   - 1.4 “exception” is a value that is thrown using the throw statement.
-
   - 1.5 “reason” is a value that indicates why a promise was rejected.
 
   # 1. 术语
   - 1.1 "promise"的类型是`object`or`function`, 并且有一个`then`方法, `then`的行为遵循规范.
-
   - 1.2 "thenable"是一个`object`or`function`, 它有一个`then`方法(*所以这个看起来像形容词的东西其实在这里是名词*)
-
   - 1.3 "value"可以是一切合法的JS value(包括`undefined`, `thenable`或者`promise`)
-
   - 1.4 "exception"是一个由`throw`声明抛出的value[*不一定是`error`*]
-
   - 1.5 "reason"用来表明promise被`reject`的原因
 
 # 2. Requirements
@@ -235,7 +227,6 @@ To run `[[Resolve]](promise, x)`, perform the following steps:
   - 2.3.2.3 如果/当`x`rejected, 用相同的reason reject这个`promise`.
 - 2.3.3 相反的, 如果`x`是object或者function时,
   - 2.3.3.1 将`x.then`赋值给`then`. [3.5]
-  - 2.3.3.2 If retrieving the property `x.then` results in a thrown exception `e`, reject `promise` with `e` as the reason.
   - 2.3.3.2 如果`x.then`的结果导致了一个异常`e`, 用`e`去reject这个`promise`.
   - 2.3.3.3 如果`then`是一个function, 调用这个function并且设置`x`作为上下文, `resolvePromise`和`rejectPromise`分别作为第一、第二个参数:
     - 2.3.3.3.1 如果/当`resolvePromise`被`y`调用, 那么运行`[[Resolve]](promise, y)`
@@ -272,10 +263,14 @@ If a promise is resolved with a thenable that participates in a circular thenabl
 
 - 3.1 这里, "平台码" 表示引擎代码(*e.g. V8)*/环境/promise本身实现的代码. 在实际情况中, 这保证了`onFulFilled`和`onRejected`一定是`then`被调用后, event loop交还主线程一个新的执行栈之后异步调用的. 这个特性可以通过`setTimeout`和`setImmediate`这种宏任务来实现, 也可以通过`MutationObserver`和`process.nextTick`这样的微任务来实现.(*这就是为啥一些考Promise和异步的题, 在浏览器和Node环境中打印顺序不同, 同一次执行栈中, 尽管微任务注册的可能比宏任务晚, 但最晚也在本次栈的末尾, 这里不展开讨论*). 由于promise的实现通常都考虑了平台码, 他自身就往往包含了任务调度队列或处理handlers的所谓“蹦床”一样的装置.
 
-- 3.2 也就是说，严格模式下`this`是`undefined`; 而在非严格模式下，`this`是全局变量.
+- 3.2 也就是说,  严格模式下`this`是`undefined`; 而在非严格模式下,  `this`是全局变量.
 
 - 3.3 实际的实现中在满足规范的所有要求的情况下, 可能会出现`promise2 === promise1`. 这些实现都应该在文档中指出满足`promise2 === promise1`的具体条件.
 
-- 3.4 Generally, it will only be known that `x` is a true promise if it comes from the current implementation. This clause allows the use of implementation-specific means to adopt the state of known-conformant promises.
+- 3.4 大体上讲, 如果`x`来自当前实现, 它才被认为是一个promise(*相对于其他仅仅具有then接口,  但并非本实现的thenables而言*). 这使得(*该*)实现中有特定的一套方法去获取那些形似的promises的state.(*3.4写的有点绕,  意思就是判断`x`是promise的条件,  会在具体的某个实现中详尽编写,  因为该条注释针对的就是当`x`是promsie或者是非promise的时候,  处理的方法不同,  所以判断是promise的方法要尽量详尽和严谨*)
 
-- 3.4 大体上讲, 如果`x`来自当前实现, 它才被认为是一个promise(*相对于其他仅仅具有then接口，但并非本实现的thenables而言*). 这使得(*该*)实现中有特定的一套方法去获取那些形似的promises的state.(*3.4写的有点绕，意思就是判断`x`是promise的条件，会在具体的某个实现中详尽编写，因为该条注释针对的就是当`x`是promsie或者是非promise的时候，处理的方法不同，所以判断是promise的方法要尽量详尽和严谨*)
+- 3.5 首先赋值给`x.then`一个引用, 然后测试这个引用, 然后调用这个引用, 这些步骤避免了对`x.then`的多重访问. 这个保护措施是很重要的, 他保证了一个可变的可访问属性的一致性.
+
+- 3.6 Implementations should not set arbitrary limits on the depth of thenable chains, and assume that beyond that arbitrary limit the recursion will be infinite. Only true cycles should lead to a `TypeError`; if an infinite chain of distinct thenables is encountered, recursing forever is the correct behavior.
+
+- 3.6 在具体实现中, 不应给thenable的调用链设置一个有限的深度边界, 也不要去假设超过了这个边界, 调用链会变成无限循环. 这正的循环会导致`TypeError`; 如果不同的thenables形成了无限调用的循环, 一直递归下去,  就是他的正确表现.
