@@ -270,6 +270,12 @@ If a promise is resolved with a thenable that participates in a circular thenabl
 
 # 3. 注释
 
-- 3.1 Here “platform code” means engine, environment, and promise implementation code. In practice, this requirement ensures that `onFulfilled` and `onRejected` execute asynchronously, after the event loop turn in which `then` is called, and with a fresh stack. This can be implemented with either a “macro-task” mechanism such as `setTimeout` or `setImmediate`, or with a “micro-task” mechanism such as `MutationObserver` or `process.nextTick`. Since the promise implementation is considered platform code, it may itself contain a task-scheduling queue or “trampoline” in which the handlers are called.
+- 3.1 这里, "平台码" 表示引擎代码(*e.g. V8)*/环境/promise本身实现的代码. 在实际情况中, 这保证了`onFulFilled`和`onRejected`一定是`then`被调用后, event loop交还主线程一个新的执行栈之后异步调用的. 这个特性可以通过`setTimeout`和`setImmediate`这种宏任务来实现, 也可以通过`MutationObserver`和`process.nextTick`这样的微任务来实现.(*这就是为啥一些考Promise和异步的题, 在浏览器和Node环境中打印顺序不同, 同一次执行栈中, 尽管微任务注册的可能比宏任务晚, 但最晚也在本次栈的末尾, 这里不展开讨论*). 由于promise的实现通常都考虑了平台码, 他自身就往往包含了任务调度队列或处理handlers的所谓“蹦床”一样的装置.
 
-- 3.1 这里, "平台码" 表示引擎代码(*e.g. V8)*/环境/promise本身实现的代码. 在实际情况中, 这保证了`onFulFilled`和`onRejected`一定是`then`被调用后, event loop交还主线程一个新的执行栈之后异步调用的. 这个特性可以通过`setTimeout`和`setImmediate`这种宏任务来实现, 也可以通过`MutationObserver`和`process.nextTick`这样的微任务来实现.(*这就是为啥一些考Promise和异步的面试题, 在浏览器和Node环境中打印顺序不同, 同一次执行栈中, 尽管微任务注册的可能比宏任务晚, 但最晚也在本次栈的末尾, 这里就不展开说这个了*). 由于promise的实现通常都考虑了平台码, 他自身就往往包含了任务调度队列或处理handlers的所谓“蹦床”一样的装置.
+- 3.2 也就是说，严格模式下`this`是`undefined`; 而在非严格模式下，`this`是全局变量.
+
+- 3.3 实际的实现中在满足规范的所有要求的情况下, 可能会出现`promise2 === promise1`. 这些实现都应该在文档中指出满足`promise2 === promise1`的具体条件.
+
+- 3.4 Generally, it will only be known that `x` is a true promise if it comes from the current implementation. This clause allows the use of implementation-specific means to adopt the state of known-conformant promises.
+
+- 3.4 大体上讲, 如果`x`来自当前实现, 它才被认为是一个promise(*相对于其他仅仅具有then接口，但并非本实现的thenables而言*). 这使得(*该*)实现中有特定的一套方法去获取那些形似的promises的state.(*3.4写的有点绕，意思就是判断`x`是promise的条件，会在具体的某个实现中详尽编写，因为该条注释针对的就是当`x`是promsie或者是非promise的时候，处理的方法不同，所以判断是promise的方法要尽量详尽和严谨*)
