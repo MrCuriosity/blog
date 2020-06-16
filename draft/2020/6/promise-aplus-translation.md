@@ -123,11 +123,8 @@ promise2 = promise1.then(onFulfilled, onRejected);
 ```
 
   - 2.2.7.1 如果以上代码中的`onFulfilled`或`onRejected` 返回一个`x`, 按2.3的顺序处理`[[Resolve]](promise2, x)`.
-
   - 2.2.7.2 如果以上代码中的`onFulfilled`或`onRejected` 抛出一个`e`, `promise2`必须以`e`作为其reason被rejected.
-
   - 2.2.7.3 如果`onFulfilled`不是函数并且`promise1`已经fulfilled, `promise2`必须和`promise1`同样的value被fulfilled.
-
   - 2.2.7.4 如果`onRejected`不是函数并且`promise1`已经rejected, `promise2`必须和`promise1`以同样的reason被rejected.
 
 # 2.3 The Promise Resolution Procedure
@@ -211,4 +208,4 @@ If a promise is resolved with a thenable that participates in a circular thenabl
 
 - 3.5 首先赋值给`x.then`一个引用, 然后测试这个引用, 然后调用这个引用, 这些步骤避免了对`x.then`的多重访问. 这个保护措施是很重要的, 他保证了一个可变的可访问属性的一致性.
 
-- 3.6 在具体实现中, 不应给thenable的调用链设置一个有限的深度边界, 也不要去假设超过了这个边界, 调用链会变成无限循环. 这正的循环会导致`TypeError`; 如果不同的thenables形成了无限调用的循环, 一直递归下去,  就是他的正确表现.
+- 3.6 在具体实现中, 不应给thenable的调用链设置一个有限的深度边界, 也不要去假设超过了这个边界, 调用链会变成无限循环. 只有真的循环会导致`TypeError`; 如果不同的thenables形成了无限调用的循环, 一直递归下去,  就是他的正确表现.
