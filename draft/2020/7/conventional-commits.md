@@ -26,7 +26,10 @@
 2. 根据规范的commit messages, 从而提供一个易追溯、易读的版本历史:
     - [standard-version](https://github.com/conventional-changelog/standard-version), 这是一个遵从[semanticVersion](https://semver.org/)版本策略的版本管理和发布工具, 并且内部是使用git commits的内容作为元数据, 所以规范的commits内容是必要的, 于是他依赖于:
 3. 基于2, 生成规范的CHANGELOG
-    - [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog), 简单的说, 他提供了standard-version如何来使用git commits元数据的规则, 当然, 其中也有很多配置, github上都有, 这里就不一一列举了.
+    - [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog), 简单的说, 他提供了standard-version如何来使用git commits元数据的规则.
+    通过2和3生成的changelog:
+
+      ![image](https://github.com/MrCuriosity/blog/blob/master/images/fake-change-log-1.jpg)
 4. 借助预提交工具, 傻瓜式的生成规范的git commits
     - [@commitlint/prompt-cli](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/prompt-cli), commitlint自带的交互式commits生成工具, 但是还有更好的选择：
     - [commitizen](https://github.com/commitizen/cz-cli), 交互式提交工具, 让开发者在已有的types中选择, 可配置, 并且已经有很多成熟的adapters,
