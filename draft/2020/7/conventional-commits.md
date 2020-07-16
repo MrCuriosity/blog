@@ -57,3 +57,6 @@
     // ...
     }
     ```
+这个配置在使用的时候是这样:
+
+![image](https://github.com/MrCuriosity/blog/blob/master/images/yarn-cz-2.gif)
