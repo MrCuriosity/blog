@@ -17,7 +17,8 @@
 
 ---
 
-## 作用:
+### 作用:
+
 1. 规范多人协作的提交信息，使之看起来就像一个人写的！提供一个语义化、结构化的提交历史，使得commits的类型一目了然. 尤其是在人数较多的团队，或是由社区维护的一些仓库，这种基于约定，受制于lint和pre-commit等工具的规范就更能体现其价值.
   - [husky](https://github.com/typicode/husky)(`pre` or `post` commit时的检查钩子)
     - [commitlint](https://github.com/conventional-changelog/commitlint#cli)， 顾名思义，是一个lint工具，配合🐶哈士奇，在钩子中触发lint检查.
