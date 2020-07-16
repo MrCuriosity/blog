@@ -65,7 +65,7 @@
 ![image](https://github.com/MrCuriosity/blog/blob/master/images/yarn-cz-2.gif)
 
 ### 使用
-总结一下, 最终配置是husky的钩子, 加commitlint的message验证, 再加交互式命令行生成commit message
+总结一下, 最终配置是husky的钩子, 加commitlint的message验证, 再加交互式命令行生成commit message(不包括`standard-version`)
 ```
 yarn add @commitlint/cli @commitlint/config-conventional @commitlint/prompt commitizen cz-conventional-changelog husky --dev
 ```
