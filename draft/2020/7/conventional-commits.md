@@ -71,7 +71,7 @@ package.json
 
 ```json
 {
-  /** 这里就不要复制了, 请参考你当时安装的版本而定 **/
+  // devDependencies就不要复制了, 请参考你当时安装的版本而定
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-conventional": "^9.1.1",
