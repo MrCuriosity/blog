@@ -41,7 +41,7 @@
       "path": "./node_modules/cz-conventional-changelog",
       "maxHeaderWidth": 100,
       "maxLineWidth": 100,
-      "defaultType": "chore",
+      "defaultType": "docs",
       "defaultScope": "",
       "defaultSubject": "",
       "defaultBody": "",
