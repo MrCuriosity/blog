@@ -1,9 +1,9 @@
 ## Generator原理及实现
-星号函数出现以前，JS的异步编程写法基本有 **回调** 和 **Promise（本质上也是注册回调）** 两种方式，并且写法不够优雅，也不易读；generator的出现使得异步编程在 **语法** 上同步化，非常易写易读，除此之外，generator function所返回的迭代器提供了 **保留上下文并等待执行** 和 **注入** 的方式来控制迭代器对集合的迭代，功能更强大。
+星号函数出现以前, JS的异步编程写法基本有 **回调** 和 **Promise (本质上也是注册回调)  ** 两种方式, 并且写法不够优雅, 也不易读；generator的出现使得异步编程在 **语法** 上同步化, 非常易写易读, 除此之外, generator function所返回的迭代器提供了 **保留上下文并等待执行** 和 **注入** 的方式来控制迭代器对集合的迭代, 功能更强大。
 
 ### 一般用法
-generator定义了一组状态，并返回一个迭代器，通过调用迭代器的`.next()`方法，来逐步遍历这组状态。
-- 首先，像写平常的函数一样写星号函数，只不过星号函数拥有一些`yield`关键字与`yield` **后面的表达式**，表达式的值即集合中迭代到的值
+generator定义了一组有序状态, 并返回一个迭代器, 通过调用迭代器的`.next()`方法, 来逐步遍历这组状态。
+- 首先, 像写平常的函数一样写星号函数, 只不过星号函数拥有一些`yield`关键字与`yield` **后面的表达式**, 表达式的值即集合中迭代到的值
 ```javascript
 function* gen() {
   yield '1';
@@ -13,7 +13,7 @@ let iterator = gen();
 iterator.next(); // {value: "1", done: false}
 iterator.next(); // {value: "2", done: false}
 ```
-- `return`语句是这个有序集合结束的标志，不显式的写`return`就是`undefined`，迭代结束之后(迭代器的`done`属性为`true`)，继续调用`.next()`，会一直得到`{value: undefined, done: true}`
+- `return`语句是这个有序集合结束的标志, 不显式的写`return`就是`undefined`, 迭代结束之后(迭代器的`done`属性为`true`), 继续调用`.next()`, 会一直得到`{value: undefined, done: true}`
 ```javascript
 function* gen() {
   yield '1';
@@ -35,7 +35,7 @@ iterator.next(); // {value: "2", done: false}
 iterator.next(); // {value: "Explicit return value", done: true}
 iterator.next(); // {value: undefined, done: true}
 ```
-- 作为`yield`表达式整体，通常都是`undefined`
+- 作为`yield`表达式整体, 通常都是`undefined`
 ```javascript
 function* gen() {
   const s = yield 'sentence 1';
@@ -58,7 +58,7 @@ iterator.next()
 // sync 1
 // {value: undefined, done: true}
 ```
-- 可被一些接口迭代，如`...`, `for of`, 解构赋值等
+- 可被一些接口迭代, 如`...`, `for of`, 解构赋值等
 ```javascript
 function* gen() {
   yield '1';
@@ -84,7 +84,7 @@ let v1, arr;
 v1 // "1"
 arr // (2) ["2", "3"]
 ```
-- `yield*`语法，如果表达式也是一个迭代器，`yield*`会逐步迭代完这个迭代器
+- `yield*`语法, 如果表达式也是一个迭代器, `yield*`会逐步迭代完这个迭代器
 ```javascript
 function* genInner() {
   yield 'inner 1';
@@ -120,9 +120,11 @@ iterator2.next()
 // {value: undefined, done: true}
 ```
 
-### 迭代器（tbd）
-### 实现（tbd）
-### 应用场景（tbd）
+### 迭代器 (tbd)  
+  - 本质上是部署了[Symbol.iterator]接口
+  - 一些内建的数据结构已经部署了该接口, 所以可以被`...`, `for of`, 解构赋值等手段迭代, 如`String`, `Array`, `Map`, `Set`等.
+### 实现 (tbd)  
+### 应用场景 (tbd)  
   - await / async
   - redux-saga
 ---
