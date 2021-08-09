@@ -1,7 +1,7 @@
 ## Generator原理及实现
 星号函数出现以前，JS的异步编程写法基本有 **回调** 和 **Promise（本质上也是注册回调）** 两种方式，并且写法不够优雅，也不易读；generator的出现使得异步编程在 **语法** 上同步化，非常易写易读，除此之外，generator function所返回的迭代器提供了 **保留上下文并等待执行** 和 **注入** 的方式来控制迭代器对集合的迭代，功能更强大。
 
-## 一般用法
+### 一般用法
 generator定义了一组状态，并返回一个迭代器，通过调用迭代器的`.next()`方法，来逐步遍历这组状态。
 - 首先，像写平常的函数一样写星号函数，只不过星号函数拥有一些`yield`关键字与`yield` **后面的表达式**，表达式的值即集合中迭代到的值
 ```javascript
@@ -84,6 +84,47 @@ let v1, arr;
 v1 // "1"
 arr // (2) ["2", "3"]
 ```
+- `yield*`语法，如果表达式也是一个迭代器，`yield*`会逐步迭代完这个迭代器
+```javascript
+function* genInner() {
+  yield 'inner 1';
+  yield 'inner 2';
+}
+
+function* genOuter1() {
+  yield 'outer2 1';
+  const iterator = genInner();
+  yield iterator;
+}
+var iterator1 = genOuter1();
+iterator1.next();
+// {value: "outer 1", done: false}
+iterator1.next();
+// {value: genInner, done: false}done: falsevalue: genInner {<suspended>}[[Prototype]]: Object
+iterator1.next();
+// {value: undefined, done: true}
+
+function* genOuter2() {
+  yield 'outer2 1';
+  const iterator = genInner();
+  yield* iterator;
+}
+var iterator2 = genOuter2();
+iterator2.next()
+// {value: "outer2 1", done: false}
+iterator2.next()
+// {value: "inner 1", done: false}
+iterator2.next()
+// {value: "inner 2", done: false}
+iterator2.next()
+// {value: undefined, done: true}
+```
+
+### 迭代器（tbd）
+### 实现（tbd）
+### 应用场景（tbd）
+  - await / async
+  - redux-saga
 ---
 
 参考
