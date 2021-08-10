@@ -120,8 +120,8 @@ iterator2.next()
 // {value: undefined, done: true}
 ```
 
-### 迭代协议 (tbd)  
-generator函数的返回值是一个可迭代对象，这个对象遵循**迭代协议**
+### 迭代协议
+generator函数的返回值是一个可迭代对象，这个对象遵循**迭代协议**，迭代协议分为**可迭代协议**和**迭代器协议**
 > 可迭代协议允许 JavaScript 对象定义或定制它们的迭代行为，例如，在一个 for..of 结构中，哪些值可以被遍历到。一些内置类型同时是内置可迭代对象，并且有默认的迭代行为，比如 Array 或者 Map，而其他内置类型则不是（比如 Object)）。
 > 要成为可迭代对象， 一个对象必须实现 `@@iterator` 方法。这意味着对象（或者它原型链上的某个对象）必须有一个键为 @@iterator 的属性，可通过常量 `Symbol.iterator` 访问该属性：
 > 
@@ -142,7 +142,25 @@ generator函数的返回值是一个可迭代对象，这个对象遵循**迭代
   > **value**
   > 迭代器返回的任何 JavaScript 值。done 为 true 时可省略。
   > next() 方法必须返回一个对象，该对象应当有两个属性： done 和 value，如果返回了一个非对象值（比如 false 或 undefined），则会抛出一个 TypeError 异常（"iterator.next() returned a non-object value"）。
-### 实现 (tbd)  
+### 实现
+归纳一下协议部分，一个对象要实现迭代协议，需要做到：
+  - 可以通过`[Symbol.iterator]`访问到一个方法，这个方法返回一个可迭代对象
+  - 可迭代对象提供了`next()`方法，其返回值是一个拥有`done`和`value`两个值的对象
+    - `done（boolean）`，如果迭代器可以产生序列中的下一个值，则为`false`，反之为`true`（此时`value`是可选的，如果有`value`就是迭代结束之后的返回值)。
+    - `value`，迭代器返回的任何JavaScript值，`done`为`true`时可忽略.
+
+```javascript
+function myGen() {
+  
+  const values = [];
+  const iterator = {
+    next: function() {
+      
+    },
+    [Symbol.iterator]: function() { return this }
+  }
+}
+```
 ### 应用场景 (tbd)  
   - await / async
   - redux-saga
