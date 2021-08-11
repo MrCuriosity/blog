@@ -3,5 +3,6 @@
 - [简易的手写柯里化函数](https://github.com/MrCuriosity/blog/blob/master/draft/2020/6/curry.md)
 - [译 - Promises/A+规范](https://github.com/MrCuriosity/blog/blob/master/draft/2020/6/promise-aplus-translation.md)
 - [简易的手写 Promise](https://github.com/MrCuriosity/blog/blob/master/draft/2020/6/promise.md)
-- [requestCallback/requestAnimationFrame/setTimeout 研究](https://github.com/MrCuriosity/blog/blob/master/draft/2020/7/requestIdleCallback-research.md)
+- [requestCallback / requestAnimationFrame / setTimeout 研究](https://github.com/MrCuriosity/blog/blob/master/draft/2020/7/requestIdleCallback-research.md)
 - [conventional-commits 及配套工具整理](https://github.com/MrCuriosity/blog/blob/master/draft/2020/7/conventional-commits.md)
+- [generator函数原理及实现](https://github.com/MrCuriosity/blog/blob/master/draft/2021/8/generator.md)

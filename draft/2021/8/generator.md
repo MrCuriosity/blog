@@ -210,10 +210,61 @@ var i2 = gen();
 [...i2]
 // (3) ["value case 0", "value case 1", "value case 2"]
 ```
+`i`是我们自己定义的数据结构，但显然，只要部署了`[Symbol.iterator]`接口就可以被`...`, `for of`迭代;
+
 这只是一个模拟的写法，真正的generator需要处理`yield`关键字，有多少个`yield`就会编译出多少个switch的case，并且也会处理`next()`注入参数来影响`yield`表达式整体值的行为。
-### 应用场景 (tbd)  
-  - await / async
-  - redux-saga
+### 应用场景
+- 异步编程语法美化，不管是回调时期的回调地狱还是Promise时期的链式调用，都远不如generator的同步写法直观
+- 因其**保留函数内部状态并等待** 和 **可迭代**的特性，使得一些原来的实现更优雅
+```javascript
+function* fiboCreator() {
+  let item1 = 0;
+  let item2 = 1;
+  while (true) {
+    const reset = yield item1;
+    [item1, item2] = [item2, item1 + item2];
+    if (reset) {
+      item1 = 0;
+      item2 = 1;
+    }
+  }
+}
+var fibo = fiboCreator()
+undefined
+fibo.next()
+// {value: 0, done: false}
+fibo.next()
+// {value: 1, done: false}
+fibo.next()
+// {value: 1, done: false}
+fibo.next()
+// {value: 2, done: false}
+fibo.next()
+// {value: 3, done: false}
+fibo.next()
+// {value: 5, done: false}
+fibo.next(true)
+// {value: 0, done: false}
+```
+- async / await语法
+```javascript
+async function () {
+  const { data } = await login(username, password);
+  if (data.status === 200) {
+    await authorize(data.token);
+  } else {
+    /** do sad path **/
+  }
+}
+```
+如上面一段伪代码, `async` / `await` 基本等于generator + autoRun `next()`, 唯一有点区别的是 `const result = await expression()`这部分是可以对`result`这个变量进行赋值的.
+
+- redux-saga
+整个`redux-saga`都是围绕generator来展开的
+  - 比如利用其**可等待**和**保留上下文**的特点来做`take`场景，实现监听action.
+  - 利用`next()`可注入的特点，解耦了saga迭代出来的**描述文本**和真实**runtime**的结果，同时也实现了`yield call(someEffect)`的赋值问题。
+  - 所以由于这层解耦关系，saga的**描述性文本**这条链路一路迭代下来（其实就是描述Effect的PlainObject）本身是无状态的（到处都有xx`Effect`的字眼，描述文本却是无状态，是不是很神奇）；同时，对`next`传参，又可以影响generator内部逻辑的走向，此时又有副作用了。由于这两个原因，整个`redux-saga`在单元测试方面可谓非常简单（简单但可能会繁琐，比如面对十几个`yield`时）
+
 ---
 
 参考
