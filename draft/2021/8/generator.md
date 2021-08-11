@@ -154,6 +154,7 @@ generator函数的返回值是一个可迭代对象，这个对象遵循**迭代
   > **value**
   > 迭代器返回的任何 JavaScript 值。done 为 true 时可省略。
   > next() 方法必须返回一个对象，该对象应当有两个属性： done 和 value，如果返回了一个非对象值（比如 false 或 undefined），则会抛出一个 TypeError 异常（"iterator.next() returned a non-object value"）。
+
 ### 实现
 归纳一下协议部分，一个对象要实现迭代协议，需要做到：
   - 可以通过`[Symbol.iterator]`访问到一个方法，这个方法返回一个可迭代对象
@@ -162,12 +163,6 @@ generator函数的返回值是一个可迭代对象，这个对象遵循**迭代
     - `value`，迭代器返回的任何JavaScript值，`done`为`true`时可忽略.
 
 ```javascript
-var context = {
-  next: 0,
-  prev: 0,
-  done: false,
-};
-
 function gen$(_context) {
   while (true) {
     switch (_context.prev = _context.next) {
@@ -181,13 +176,18 @@ function gen$(_context) {
       _context.next = 3;
       return 'value case 2';
       case 3:
-      context.done = true;
+      _context.done = true;
       return undefined;
     }
   }
 }
 
 function gen() {
+  const context = {
+    next: 0,
+    prev: 0,
+    done: false,
+  };
   const iterator = {
     next: function() {
       return {
@@ -206,7 +206,11 @@ i.next() // {value: "value case 1", done: false}
 i.next() // {value: "value case 2", done: false}
 i.next() // {value: undefined, done: true}
 
+var i2 = gen();
+[...i2]
+// (3) ["value case 0", "value case 1", "value case 2"]
 ```
+这只是一个模拟的写法，真正的generator需要处理`yield`关键字，有多少个`yield`就会编译出多少个switch的case，并且也会处理`next()`注入参数来影响`yield`表达式整体值的行为。
 ### 应用场景 (tbd)  
   - await / async
   - redux-saga
