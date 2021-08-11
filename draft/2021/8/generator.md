@@ -46,6 +46,18 @@ iterator.next();
 // s =>  undefined
 // {value: undefined, done: true}
 ```
+- 可以通过对`next()`传参，来影响上一个yield表达式的值
+```javascript
+function* gen() {
+  const s = yield 'sentence 1';
+  console.log('s => ', s);
+}
+let iterator = gen();
+iterator.next(); // {value: "sentence 1", done: false}
+iterator.next('an injected value');
+// s =>  an injected value
+// {value: undefined, done: true}
+```
 - 天然支持异步
 ```javascript
 function* gen() {
