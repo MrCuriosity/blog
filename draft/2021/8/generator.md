@@ -162,16 +162,50 @@ generator函数的返回值是一个可迭代对象，这个对象遵循**迭代
     - `value`，迭代器返回的任何JavaScript值，`done`为`true`时可忽略.
 
 ```javascript
-function myGen() {
-  
-  const values = [];
-  const iterator = {
-    next: function() {
-      
-    },
-    [Symbol.iterator]: function() { return this }
+var context = {
+  next: 0,
+  prev: 0,
+  done: false,
+};
+
+function gen$(_context) {
+  while (true) {
+    switch (_context.prev = _context.next) {
+      case 0:
+      _context.next = 1;
+      return 'value case 0';
+      case 1:
+      _context.next = 2;
+      return 'value case 1';
+      case 2:
+      _context.next = 3;
+      return 'value case 2';
+      case 3:
+      context.done = true;
+      return undefined;
+    }
   }
 }
+
+function gen() {
+  const iterator = {
+    next: function() {
+      return {
+        value: context.done ? undefined : gen$(context),
+        done: context.done,
+      };
+    },
+    [Symbol.iterator]: function() { return this },
+  };
+  return iterator;
+}
+
+var i = gen()
+i.next() // {value: "value case 0", done: false}
+i.next() // {value: "value case 1", done: false}
+i.next() // {value: "value case 2", done: false}
+i.next() // {value: undefined, done: true}
+
 ```
 ### 应用场景 (tbd)  
   - await / async
